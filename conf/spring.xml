@@ -2,21 +2,56 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+">
 
     <!-- 扫描组件 -->
     <context:component-scan base-package="com.matrix.ssm">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-
+    <!-- 引入资源文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
 
     <!-- 管理数据源 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
-        <property name="driverClassName" value=""></property>
-        <property name="url" value=""></property>
-        <property name="username" value=""></property>
-        <property name="password" value=""></property>
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+
+    <!-- 声明事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 开启注解驱动 -->
+<!--    <tx:annotation-driven />-->
+    <tx:annotation-driven transaction-manager = "transactionManager"/>
+
+    <!-- 管理MyBatis操作数据库的会话对象SqlSession -->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 设置mybatis核心配置文件的路径 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+        <!-- 设置数据源 前提条件-->
+        <property name="dataSource" ref="dataSource"></property>
+        <!-- 为类型设置类型别名 -->
+        <property name="typeAliasesPackage" value="com.matrix.ssm.bean"></property>
+        <!-- 设置映射文件路径 -->
+        <property name="mapperLocations" value="classpath:com/matrix/ssm/mapper/*.xml"></property> <!-- 注意路径的写法 -->
+    </bean>
+
+    <!-- 在所设置的包下 将所有接口生成 动态代理实现类 并由Spring管理-->
+    <!-- 为了在 EmpService 中能够装配 EmpMapper  -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.matrix.ssm.mapper"></property>
     </bean>
 
 </beans>

@@ -5,7 +5,50 @@
  
  
 <mapper namespace="com.matrix.ssm.mapper.EmpMapper">
-	
 
+    <!-- resultMap 这种情况主要用于解决实体类属性名与数据库表中字段名不一致的情况下，解决将查询结果映射成实体对象。 -->
+    <resultMap type="Emp" id="empMap">
+        <id column="eid" property="eid"/>
+        <result column="ename" property="ename"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <association property="dept" javaType="Dept"> <!-- association 用于多对一 -->
+            <id column="did" property="did"/>
+            <result column="dname" property="dname"/>
+        </association>
+    </resultMap>
+
+    <!-- List<Emp> getAllEmp(); -->
+    <select id="getAllEmp" resultMap="empMap">
+		select
+		e.eid,e.ename,e.age,e.sex,d.did,d.dname
+		from emp e
+		left join
+		dept d
+		on
+		e.did = d.did
+	</select>
+
+    <!-- Emp getEmpByEid(String eid); -->
+    <select id="getEmpByEid" resultMap="empMap">
+		select
+		e.eid,e.ename,e.age,e.sex,d.did,d.dname
+		from emp e
+		left join
+		dept d
+		on
+		e.did = d.did
+		where e.eid = #{eid}
+	</select>
+
+    <!-- void updateEmp(Emp emp); -->
+    <update id="updateEmp">
+		update emp set
+		ename = #{ename},
+		age = #{age},
+		sex = #{sex},
+		did = #{dept.did} <!-- 注意 dept.did-->
+		where eid = #{eid}
+	</update>
 	
 </mapper>
