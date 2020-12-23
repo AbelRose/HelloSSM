@@ -25,7 +25,7 @@ public class EmpController {
     private EmpService service;
 
     @RequestMapping(value="/emps/{pageNum}", method= RequestMethod.GET)
-    public String getAllEmp(Map<String, Object> map, @PathVariable("pageNum")Integer pageNum, HttpServletRequest request) {
+    public String getAllEmp(Map<String, Object> map, @PathVariable("pageNum")Integer pageNum, HttpServletRequest request) { // {pageNum} 对应  @PathVariable
         //通过PageHelper设置页面信息，第一个参数为页数，第二个参数为每页显示的条数
         PageHelper.startPage(pageNum, 4);
         List<Emp> empList = service.getAllEmp();
@@ -37,8 +37,9 @@ public class EmpController {
         return "list";
     }
 
+    // 跳转到修改页面的时候得到的数据
     @RequestMapping(value="/emp/{eid}", method=RequestMethod.GET)
-    public String toUpdate(@PathVariable("eid") String eid, Map<String, Object> map) {
+    public String toUpdate(@PathVariable("eid") String eid, Map<String, Object> map) { // 将拿到的东西放到作用域中 Map<String, Object> map
         //要修改的员工信息
         Emp emp = service.getEmpByEid(eid);
         //所有的部门信息
@@ -62,10 +63,9 @@ public class EmpController {
     }
 
     @RequestMapping(value="/emps", method=RequestMethod.DELETE)
-    public String deleteMore(String[] eid) {
+    public String deleteMore(String[] eid) { // 注意是一个数组 String[] eid
         //获取客户端name属性相同的多个元素的值，可以通过字符串字节或去，每个值中间以逗号分隔，也可以以数组直接获取
         System.out.println(Arrays.toString(eid));
-
         return "";
     }
 

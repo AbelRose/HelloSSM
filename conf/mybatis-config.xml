@@ -4,6 +4,7 @@
  "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+
 	<settings>
 		<!-- 将下划线映射成驼峰，user_name映射为userName -->
 		<setting name="mapUnderscoreToCamelCase" value="true"/>
@@ -18,4 +19,5 @@
 	<plugins>
 		<plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
 	</plugins>
+
 </configuration>
